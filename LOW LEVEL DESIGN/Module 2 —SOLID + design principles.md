@@ -530,7 +530,8 @@ For new variants (new delivery types / payment types), you should **not have to 
 - **Factory/Registry** = choose the right strategy based on the type
 
 **Q. Strategy vs Factory: when do you need each?**
-Later 
+**Strategy** = swap an algorithm/policy at runtime behind the same interface (remove `if/else`, enable per-tenant/A-B behavior).  
+**Factory** = choose and construct the right concrete implementation at creation time (hide `new` + wiring based on config/input).
 
 
 **Q. How would you make OCP work when the “type” comes from DB/config?**
@@ -2057,6 +2058,7 @@ svc.checkout(7);
 (Other acceptable ones: `IPaymentProcessor`, `ITicketRepository`, `IClock`)
 
 3. Show how you’d switch DB implementation without touching business logic.
+   Use **Dependency Inversion + Repository (port/adapter)**: business depends on an **interface**, DB implementations live behind it. Then you swap the concrete repo via **DI/factory/config**, without touching business logic.
    
 4. When do you use `unique_ptr` vs reference for injected dependencies?
  * Use **reference (`T&`)** when:
@@ -2777,14 +2779,6 @@ A seam is a place where you can “plug in” something later without rewriting 
 	So: **YAGNI controls when I abstract; OCP guides where I place the extension point.**
 
 2. Give an example where patterns made things worse.
-	I keep the _core policy_ clean and stable, but I don’t introduce heavy abstractions until the **axis of change is real**. With 1–2 variants, I’ll use a simple `if/else` **contained in one place** (a dispatcher/factory). When new variants start arriving or changes become frequent, I refactor that single switch into Strategy/registry.  
-	So: **YAGNI controls when I abstract; OCP guides where I place the extension point.**
-
-**One-liner you can say:**
-
-> “Start simple, isolate the switch, refactor to polymorphism when the change axis proves itself.”
-
-3. What’s a “seam” and why is it better than over-abstraction?
 	**Case: “Plugin framework” for 2 payment providers**  
 	A team expected many payment types and built:
 	- registry + plugin loader
@@ -2793,6 +2787,13 @@ A seam is a place where you can “plug in” something later without rewriting 
 	- multiple base interfaces per “payment”
 
 	But reality: only Stripe + Razorpay existed for months.
+
+**One-liner you can say:**
+
+> “Start simple, isolate the switch, refactor to polymorphism when the change axis proves itself.”
+
+3. What’s a “seam” and why is it better than over-abstraction?
+	A **seam** is the _smallest deliberate boundary_ where you can swap an implementation (DB/mock/provider) safely. **Seams beat over-abstraction** because they localize change/testing to one spot without adding unnecessary layers and indirection everywhere.
 
 **What got worse:**
 - adding a new provider required touching 6–8 files + registration rules

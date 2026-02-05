@@ -675,7 +675,7 @@ Ownership answers “who deletes?”
 1️⃣ `std::unique_ptr` → **Sole ownership**
 
 **Meaning (simple)**
- **Only one owner exists. When the owner dies, the resource is destroyed.**
+**Only one owner exists. When the owner dies, the resource is destroyed.**
 - Cannot be copied
 - Can be moved
 - Models **exclusive ownership**
@@ -687,7 +687,7 @@ Ownership answers “who deletes?”
 - When the key is destroyed, access is gone
 
 
- 2️⃣ `std::shared_ptr` → **Shared ownership**
+2️⃣ `std::shared_ptr` → **Shared ownership**
 
 **Meaning (simple)**
 **Multiple owners exist. Resource lives until the last owner goes away.**
@@ -799,7 +799,7 @@ public:
     - Bypass validation
 - Base class **loses control**
 - Invariants can be violated silently
-    
+
 📌 This creates **fragile designs**.
 
 ✅ Behavior-based design (correct)
