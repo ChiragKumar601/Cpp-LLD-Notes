@@ -223,36 +223,12 @@ In associations I use raw pointers/references for non-owning links. If the class
 “A Library has many Books, but Books can exist without a Library.”**
 
 ```
-Library  0..*  o---->  Book  0..1
-         (hollow diamond at Library)
+Library (1)  ◇──────── (0..*) Book
 ```
 **How to read it:**
-- `Library o----> Book` = **aggregation** (Library “has” Books, but doesn’t own them)
-- `0..*` near **Book** end = a Library can be linked to **many Books**
-- `0..1` near **Library** end = a Book can exist with **no Library** (optional association)
-
-For: “A Library has many Books, but Books can exist without a Library”
-
-The UML you want is about these two questions:
-Q1: For **one Library**, how many Books can it be linked to?
-✅ **0..*** (a library can have zero or many books)
-
-So near the **Book** end you put: **0..***
-Q2: For **one Book**, how many Libraries can it be linked to?
-That depends on your domain model:
-
- **Case A: Physical copy model (a copy belongs to at most one library at a time)**
- ✅ **0..1**
-```
-Library 1 -------- 0..* BookCopy
-BookCopy 0..1 ----- 1   Library
-```
-
-Case B: Title/catalog model (same “Book” can be in many libraries)
-✅ 0..* 
-```
-Library 0..* ------ 0..* BookTitle
-```
+- **`Library (1)`** on the Library end means: **each Book is associated with exactly 1 Library** _(at a time)_.
+- **`(0..*) Book`** on the Book end means: **a Library can have zero or many Books**.
+- The **hollow diamond (◇)** at `Library` means **aggregation**: Library is the “whole”, Books are “parts”, but **Books can exist independently** of the Library (not lifetime-owned).
 
 
 **Q. What’s the difference between aggregation and composition in real systems?**
