@@ -315,6 +315,7 @@ Client ----> |  IInfraFactory       |
 ---
 
 ### Practical Example (C++)
+
 ```cpp
 #include <memory>
 #include <string>
@@ -630,12 +631,15 @@ d1->setTitle("Invoice #123");
 ### Interview Questions (Prototype)
 
 **Q. When is Prototype better than Builder?**
+**Prototype** is better when creating an object is **expensive/complex** and you need **many similar instances**—clone a preconfigured template and tweak fields.
 
-**Q. What must be true for clone() to be safe? (deep copy rules)**
+**Q. What must be true for clone() to be safe? 
+Deep copy is important, but “safe clone” also requires no shared mutable state, preserved invariants, and no slicing / correct concrete type with clear ownership.
 
 **Q. What’s the ownership model? (unique_ptr)**
 
 **Q. How do you clone polymorphic types correctly in C++?**
+Put a virtual `clone` in the base, override it in every derived to return a new instance of that derived copying its full state, so cloning through a base reference preserves the dynamic type, avoids slicing, and gives independent ownership.
 
 
 ---
@@ -773,8 +777,7 @@ Use an RAII “lease/handle” whose destructor automatically returns the object
 When exhausted, you either block (often with timeout), fail fast (throw/return error), or expand up to a hard max—choice depends on latency vs availability goals.
 
 **Q. How do you make it thread-safe? (mutex/condvar)**
-
-
+Use a **mutex** to protect the pool’s shared state (free list/queue) and a **condition_variable** so threads **wait when empty** and **wake on release** (`cv.wait(lock, pred)`), ensuring only one thread mutates the pool at a time.
 
 
 ---
