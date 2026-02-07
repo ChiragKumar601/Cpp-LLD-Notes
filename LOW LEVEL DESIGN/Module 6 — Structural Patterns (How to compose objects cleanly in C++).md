@@ -111,10 +111,14 @@ public:
 **Facade** simplifies a complex subsystem behind a unified API; **Adapter** converts one interface into another so incompatible code can work together.
 
 **Q. Object adapter vs class adapter: which is preferred and why?**
+Object adapters are preferred because they use **composition over inheritance**, avoid tight coupling, and work with existing/adapted classes without subclassing.
 
 **Q. Where does Adapter live in architecture? (at boundaries)**
+At **system boundaries** (SDK, DB, network, legacy APIs) to isolate external changes from core domain logic.
 
 **Q. How do you test adapters? (fake adaptee / integration tests)**
+Unit-test with a **fake/mock adaptee** for translation logic, and add **integration tests** against the real dependency to catch contract drift.
+
 
 
 ---
@@ -567,6 +571,7 @@ Q. Proxy vs Decorator: differentiate by intent.
 - **Decorator:** _adds responsibilities/features_ around the same interface (logging, metrics, retry), and wrappers can be stacked.
 
 Q. How would you implement a caching proxy?
+I’d place a caching proxy in front of the real cache/data source. On a request, the proxy first checks its local key-value cache and returns immediately on a hit. On a miss, it delegates to the real cache (DB/Redis/service), stores the result in the proxy cache with TTL/eviction, and returns it.
 
 Q. What are common proxy types? (virtual/lazy, remote, protection, caching)
 - **Virtual / Lazy proxy:** delays expensive creation until first use
